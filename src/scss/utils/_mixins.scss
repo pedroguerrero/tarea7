@@ -1,0 +1,3 @@
+@mixin bg-img($url) {
+  background: url($url) no-repeat;
+}

@@ -1,0 +1,17 @@
+@import '../utils/mixins';
+
+.contact-section {
+  padding: 200px 0;
+  @include bg-img('../img/bg-2.jpg');
+  background-size: cover;
+}
+
+.medical-team-section {
+  padding: 200px 0;
+  @include bg-img('../img/bg-3.jpg');
+  background-size: cover;
+}
+
+.remove-doctor {
+  background-color: red;
+}
