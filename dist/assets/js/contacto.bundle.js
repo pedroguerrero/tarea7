@@ -1,1 +1,1 @@
-console.log("contacto");
+console.log("contacto"),document.querySelector("#contact").addEventListener("submit",(o=>{o.stopPropagation(),o.preventDefault(),alert("Formulario enviado")}));
