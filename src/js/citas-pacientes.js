@@ -5,6 +5,22 @@ import * as bootstrap from 'bootstrap';
 import { Stack } from './Stack';
 import { Queue } from './Queue';
 
+function calculateTotalHours(doctors, doctorList) {
+  if (doctorList.length === 0) {
+    return;
+  }
+
+  const doctor = doctorList.pop();
+
+  if (!(doctor in doctors)) {
+    doctors[doctor] = 0;
+  }
+
+  doctors[doctor] += 1;
+
+  return calculateTotalHours(doctors, doctorList);
+}
+
 async function getDoctors() {
   const doctorsUrl = 'https://jsonplaceholder.typicode.com/users';
   const { data } = await axios.get(doctorsUrl);
@@ -20,6 +36,14 @@ function generateRandomIndex(length) {
   return Math.floor(Math.random() * length);
 }
 
+function discountByFn(price, discountFn) {
+  return price - discountFn();
+}
+
+function discountByPercentage(price, percentage) {
+  return () => Math.floor(price * percentage);
+}
+
 console.log('Pagina de cita de pacientes');
 
 console.log('Creando pacientes');
@@ -30,6 +54,7 @@ console.log('Creando pacientes');
   const patients = new Stack();
 
   let randIndex = generateRandomIndex(doctorList.length);
+  let price = generatePrice();
 
   patients.push({
     name: 'paciente 1',
@@ -37,8 +62,12 @@ console.log('Creando pacientes');
     hour: '09:00',
     doctorName: doctorList[randIndex].name,
     doctorId: doctorList[randIndex].id,
-    price: generatePrice(),
+    price,
+    waitTime: 10,
+    discount: discountByFn(price, discountByPercentage(price, 0.1)),
   });
+
+  price = generatePrice();
 
   randIndex = generateRandomIndex(doctorList.length);
 
@@ -48,8 +77,12 @@ console.log('Creando pacientes');
     hour: '08:00',
     doctorName: doctorList[randIndex].name,
     doctorId: doctorList[randIndex].id,
-    price: generatePrice(),
+    price,
+    waitTime: 20,
+    discount: discountByFn(price, discountByPercentage(price, 0.1)),
   });
+
+  price = generatePrice();
 
   randIndex = generateRandomIndex(doctorList.length);
 
@@ -59,8 +92,12 @@ console.log('Creando pacientes');
     hour: '07:00',
     doctorName: doctorList[randIndex].name,
     doctorId: doctorList[randIndex].id,
-    price: generatePrice(),
+    price,
+    waitTime: 30,
+    discount: discountByFn(price, discountByPercentage(price, 0.1)),
   });
+
+  price = generatePrice();
 
   randIndex = generateRandomIndex(doctorList.length);
 
@@ -70,7 +107,9 @@ console.log('Creando pacientes');
     hour: '06:00',
     doctorName: doctorList[randIndex].name,
     doctorId: doctorList[randIndex].id,
-    price: generatePrice(),
+    price,
+    waitTime: 10,
+    discount: discountByFn(price, discountByPercentage(price, 0.1)),
   });
 
   const patientsQueue = new Queue();
@@ -85,11 +124,51 @@ console.log('Creando pacientes');
         <td scope="col">${patient.name}</td>
         <td scope="col">${patient.date}</td>
         <td scope="col">${patient.hour}</td>
-        <td scope="col" data-doctor-id="${patient.doctorId}">${patient.doctorName}</td>
-        <td scope="col">${patient.price}</td>
+        <td scope="col" data-doctor-id="${patient.doctorId}">${
+      patient.doctorName
+    }</td>
+        <td scope="col">${patient.price.toLocaleString()}</td>
+        <td scope="col">${patient.waitTime}</td>
+        <td scope="col">${patient.discount.toLocaleString()}</td>
       </tr>
     `;
   }
+
+  const totalTimeByDr = document.querySelector('#total-dr-button');
+
+  totalTimeByDr.addEventListener('click', () => {
+    const allDoctors = [];
+    document
+      .querySelectorAll('#reserved-hours tbody td:nth-child(4)')
+      .forEach((doctor) => allDoctors.push(doctor.innerHTML));
+    const totalDrs = {};
+    calculateTotalHours(totalDrs, allDoctors);
+
+    let output = '';
+
+    for (const [doctor, totalHours] of Object.entries(totalDrs)) {
+      output += `Doctor: ${doctor} - Total de horas: ${totalHours}\n`;
+    }
+
+    alert(output);
+  });
+
+  const averageTime = document.querySelector('#average-button');
+
+  averageTime.addEventListener('click', () => {
+    let totalWaitTime = 0;
+    const waitTimes = document.querySelectorAll(
+      '#reserved-hours tbody td:last-child'
+    );
+
+    waitTimes.forEach(
+      (waitTime) => (totalWaitTime += Number(waitTime.innerText))
+    );
+
+    const average = totalWaitTime / waitTimes.length;
+
+    alert(`Tiempo promedio de espera: ${average} minutos`);
+  });
 
   patientTable.innerHTML = tableContent;
 
@@ -99,9 +178,16 @@ console.log('Creando pacientes');
   const doctorListSelect = document.querySelector('#lista-doctores');
 
   btnAddPatient.addEventListener('click', async () => {
-    document.querySelector('#nombre-paciente').value = '';
-    document.querySelector('#fecha-paciente').value = '';
-    document.querySelector('#valor').value = '';
+    const inputs = document.querySelectorAll(
+      '#form-agendar input, #form-agendar select'
+    );
+
+    for (const input of inputs) {
+      input.value = '';
+      console.log('limpiando span');
+      input.parentElement.querySelector('span').innerText = '';
+    }
+
     doctorListSelect.innerHTML = `<option value="" disabled selected>Seleccione un doctor</option>`;
 
     try {
@@ -156,7 +242,7 @@ console.log('Creando pacientes');
       hour,
       doctorName,
       doctorId,
-      price: price.value,
+      price: Number(price.value),
     };
 
     patientsQueue.enqueue(patient);
@@ -169,8 +255,10 @@ console.log('Creando pacientes');
         <td scope="col">${patient.name}</td>
         <td scope="col">${patient.date}</td>
         <td scope="col">${patient.hour}</td>
-        <td scope="col" data-doctor-id="${patient.doctorId}">${patient.doctorName}</td>
-        <td scope="col">${patient.price}</td>
+        <td scope="col" data-doctor-id="${patient.doctorId}">${
+      patient.doctorName
+    }</td>
+        <td scope="col">${patient.price.toLocaleString()}</td>
       </tr>
     `;
 
