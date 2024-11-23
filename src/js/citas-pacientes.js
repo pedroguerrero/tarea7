@@ -22,10 +22,15 @@ function calculateTotalHours(doctors, doctorList) {
 }
 
 async function getDoctors() {
-  const doctorsUrl = 'https://jsonplaceholder.typicode.com/users';
-  const { data } = await axios.get(doctorsUrl);
+  try {
+    const doctorsUrl = 'https://jsonplaceholder.typicode.com/users';
+    const { data } = await axios.get(doctorsUrl);
 
-  return data;
+    return data;
+  } catch (error) {
+    alert('Error al cargar la lista de doctores');
+    return [];
+  }
 }
 
 function generatePrice() {
