@@ -1,3 +1,4 @@
+import axios from 'axios';
 // Import all of Bootstrap's JS
 import * as bootstrap from 'bootstrap';
 
@@ -5,6 +6,8 @@ import { Stack } from './Stack';
 import { Queue } from './Queue';
 
 console.log('Pagina de cita de pacientes');
+
+const doctorsUrl = 'https://jsonplaceholder.typicode.com/users';
 
 console.log('Creando pacientes');
 
@@ -54,36 +57,50 @@ patientTable.innerHTML = tableContent;
 const addPatientModal = new bootstrap.Modal('#agregar-paciente-modal');
 
 const btnAddPatient = document.querySelector('#pending-button');
+const doctorListSelect = document.querySelector('#lista-doctores');
 
-btnAddPatient.addEventListener('click', () => {
+btnAddPatient.addEventListener('click', async () => {
   document.querySelector('#nombre-paciente').value = '';
   document.querySelector('#fecha-paciente').value = '';
+  document.querySelector('#valor').value = '';
+  doctorListSelect.innerHTML = `<option value="" disabled selected>Seleccione un doctor</option>`;
+
+  try {
+    const { data: doctorList } = await axios.get(doctorsUrl);
+
+    for (const { id, name } of doctorList) {
+      doctorListSelect.innerHTML += `<option value="${id}">${name}</option>`;
+    }
+  } catch (error) {
+    alert('Error al cargar la lista de doctores');
+  }
+
   addPatientModal.show();
 });
 
-const btnAddPatientModal = document.querySelector('#btn-agregar-paciente');
+const btnAddPatientModal = document.querySelector('#form-agendar');
 
-btnAddPatientModal.addEventListener('click', () => {
+btnAddPatientModal.addEventListener('submit', (event) => {
+  event.stopPropagation();
+  event.preventDefault();
+
   const patientName = document.querySelector('#nombre-paciente');
   const patientDate = document.querySelector('#fecha-paciente');
+  const selectedDoctor = document.querySelector('#lista-doctores');
+  const price = document.querySelector('#valor');
   let hasError = false;
 
-  if (!patientName.value.length) {
-    patientName.parentElement.querySelector('span').innerText =
-      'Campo inválido';
+  const inputs = document.querySelectorAll(
+    '#form-agendar input, #form-agendar select'
+  );
 
-    hasError = true;
-  } else {
-    patientName.parentElement.querySelector('span').innerText = '';
-  }
-
-  if (!patientDate.value.length) {
-    patientDate.parentElement.querySelector('span').innerText =
-      'Campo inválido';
-
-    hasError = true;
-  } else {
-    patientDate.parentElement.querySelector('span').innerText = '';
+  for (const input of inputs) {
+    if (!input.value.length) {
+      input.parentElement.querySelector('span').innerText = 'Campo inválido';
+      hasError = true;
+    } else {
+      input.parentElement.querySelector('span').innerText = '';
+    }
   }
 
   if (hasError) {
@@ -97,6 +114,8 @@ btnAddPatientModal.addEventListener('click', () => {
     name: patientName.value,
     date,
     hour,
+    doctor: selectedDoctor.text,
+    price: price.value,
   };
 
   patientsQueue.enqueue(patient);
@@ -107,6 +126,8 @@ btnAddPatientModal.addEventListener('click', () => {
       <td scope="col">${patient.name}</td>
       <td scope="col">${patient.date}</td>
       <td scope="col">${patient.hour}</td>
+      <td scope="col">${patient.doctor}</td>
+      <td scope="col">${patient.price}</td>
     </tr>
   `;
 

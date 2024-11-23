@@ -51,26 +51,38 @@
   <div class="modal fade" tabindex="-1" id="agregar-paciente-modal">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Agregar Doctor</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="mb-3">
-            <label for="nombre-paciente" class="form-label">Nombre</label>
-            <input type="text" id="nombre-paciente" class="form-control" placeholder="Nombre">
-            <span class="text-danger"></span>
+        <form id="form-agendar">
+          <div class="modal-header">
+            <h5 class="modal-title">Agregar Doctor</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="mb-3">
-            <label for="fecha-paciente" class="form-label">Fecha</label>
-            <input type="datetime-local" id="fecha-paciente" class="form-control">
-            <span class="text-danger"></span>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="nombre-paciente" class="form-label">Nombre</label>
+              <input type="text" id="nombre-paciente" class="form-control" placeholder="Nombre">
+              <span class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+              <label for="fecha-paciente" class="form-label">Fecha</label>
+              <input type="datetime-local" id="fecha-paciente" class="form-control">
+              <span class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+              <label for="lista-doctores" class="form-label">Doctor</label>
+              <select id="lista-doctores" class="form-select" aria-label="Select doctores"></select>
+              <span class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+              <label for="valor" class="form-label">Valor consulta</label>
+              <input type="number" id="valor" class="form-control" placeholder="Valor consulta">
+              <span class="text-danger"></span>
+            </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-          <button type="button" class="btn btn-primary" id="btn-agregar-paciente">Agendar</button>
-        </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Agendar</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -149,6 +161,8 @@
                   <th scope="col">Nombre</th>
                   <th scope="col">Fecha</th>
                   <th scope="col">Hora</th>
+                  <th scope="col">Doctor</th>
+                  <th scope="col">Valor</th>
                 </tr>
               </thead>
               <tbody></tbody>
