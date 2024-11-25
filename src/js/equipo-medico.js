@@ -3,6 +3,7 @@ import * as bootstrap from 'bootstrap';
 
 import { doctors } from './data/doctors';
 import { services } from './data/services';
+import { Doctor } from './classes/Doctor';
 
 function fixIndex() {
   const btns = document.querySelectorAll('.doctors-row .btn-close');
@@ -43,6 +44,14 @@ function sortByFn(data, fn) {
 
 console.log('Ordernando doctores por años de experiencia');
 sortByFn(doctors, (a, b) => b.experience - a.experience);
+
+const dr = new Doctor('Dr. Juan', 'Cirujano', 10);
+
+console.log(`Experiencia del doctor ${dr.nombre}: ${dr.experiencia}`);
+
+dr.experiencia = 15;
+
+console.log(`Experiencia del doctor ${dr.nombre}: ${dr.experiencia}`);
 
 window.removeDoctor = removeDoctor;
 
