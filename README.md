@@ -59,3 +59,26 @@ Se crearon las clases **Cirujano**, **Doctor**, **Paciente**, **Qeueue** y **Sta
 La herencia se implemento en la clase **Cirujano** que hereda los atributos de **Doctor**
 se sobrecargo el metodo llamado **mostarDatos** en la clase **Cirujano**.
 Se "protegio" el atributo experiencia a traves de un **getter** y **setter**
+Se creo un **setter** y **getter** del atributo experiencia de la siguiente manera
+
+```
+get experiencia() {
+  return this._experiencia;
+}
+
+set experiencia(experience) {
+  this._experiencia = experience;
+}
+```
+
+Se instancio la clase **Doctor** y se utilizo el **setter** y **getter** creado de la siguiente manera
+
+```
+const dr = new Doctor('Dr. Juan', 'Cirujano', 10);
+
+console.log(`Experiencia del doctor ${dr.nombre}: ${dr.experiencia}`);
+
+dr.experiencia = 15;
+
+console.log(`Experiencia del doctor ${dr.nombre}: ${dr.experiencia}`);
+```
