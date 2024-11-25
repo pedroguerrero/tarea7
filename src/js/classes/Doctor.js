@@ -2,13 +2,13 @@ export class Doctor {
   constructor(nombre, especialidad, experiencia) {
     this.nombre = nombre;
     this.especialidad = especialidad;
-    this.experiencia = experiencia;
+    this._experiencia = experiencia;
     this.pacienes = [];
   }
 
   mostarDatos() {
     console.log(
-      `Dr. Nombre: ${this.nombre}, Especialidad: ${this.especialidad}, Experiencia: ${this.experiencia}`
+      `Dr. Nombre: ${this.nombre}, Especialidad: ${this.especialidad}, Experiencia: ${this._experiencia}`
     );
   }
 
@@ -23,11 +23,11 @@ export class Doctor {
     });
   }
 
-  getExperiencia() {
-    return this.experiencia;
+  get experiencia() {
+    return this._experiencia;
   }
 
-  setExperiencia(experience) {
-    this.experiencia = experience;
+  set experiencia(experience) {
+    this._experiencia = experience;
   }
 }
