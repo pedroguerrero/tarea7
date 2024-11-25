@@ -2,8 +2,8 @@ import axios from 'axios';
 // Import all of Bootstrap's JS
 import * as bootstrap from 'bootstrap';
 
-import { Stack } from './Stack';
-import { Queue } from './Queue';
+import { Stack } from './classes/Stack';
+import { Queue } from './classes/Queue';
 
 function calculateTotalHours(doctors, doctorList) {
   if (doctorList.length === 0) {
