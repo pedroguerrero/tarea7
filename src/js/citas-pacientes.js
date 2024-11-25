@@ -50,6 +50,8 @@ function discountByPercentage(price, percentage) {
   return () => Math.floor(price * percentage);
 }
 
+const calculateCost = (price) => (qty) => price * qty;
+
 console.log('Pagina de cita de pacientes');
 
 console.log('Creando pacientes');
@@ -136,6 +138,10 @@ document.addEventListener('newPatient', (event) => {
     discount: discountByFn(price, discountByPercentage(price, 0.1)),
   });
 
+  randIndex = generateRandomIndex(doctorList.length);
+
+  patients.push(patients.data[1]);
+
   const patientsQueue = new Queue();
 
   const patientTable = document.querySelector('#reserved-hours tbody');
@@ -157,6 +163,36 @@ document.addEventListener('newPatient', (event) => {
       </tr>
     `;
   }
+
+  const totalTimeByPatient = document.querySelector('#total-patient-button');
+
+  totalTimeByPatient.addEventListener('click', () => {
+    const patientsTable = document.querySelectorAll('#reserved-hours tbody tr');
+    const patients = {};
+
+    patientsTable.forEach((row) => {
+      const patient = row.querySelector('td:nth-child(1)').innerHTML;
+      const price = Number(
+        row.querySelector('td:nth-child(7)').innerHTML.replace(/[^\d]+/, '')
+      );
+
+      if (!(patient in patients)) {
+        patients[patient] = { price, qty: 0 };
+      }
+
+      patients[patient].qty++;
+    });
+
+    let output = '';
+    for (const patient in patients) {
+      const fn = calculateCost(patients[patient].price);
+      output += `Paciente: ${patient} - Total a pagar: ${fn(
+        patients[patient].qty
+      ).toLocaleString()}\n`;
+    }
+
+    alert(output);
+  });
 
   const totalTimeByDr = document.querySelector('#total-dr-button');
 
