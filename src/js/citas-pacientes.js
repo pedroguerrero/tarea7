@@ -21,14 +21,15 @@ function calculateTotalHours(doctors, doctorList) {
   return calculateTotalHours(doctors, doctorList);
 }
 
-async function getDoctors() {
+async function getDoctors(cbError) {
   try {
     const doctorsUrl = 'https://jsonplaceholder.typicode.com/users';
     const { data } = await axios.get(doctorsUrl);
 
     return data;
   } catch (error) {
-    alert('Error al cargar la lista de doctores');
+    cbError('Error al cargar la lista de doctores');
+
     return [];
   }
 }
@@ -53,8 +54,26 @@ console.log('Pagina de cita de pacientes');
 
 console.log('Creando pacientes');
 
+document.addEventListener('newPatient', (event) => {
+  const alert = document.querySelector('#new-patient-alert');
+  const {
+    detail: { name, doctorName },
+  } = event;
+
+  alert.innerHTML = `
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <strong>Nuevo Paciente </strong>Se agendo un nuevo paciente: <strong>${name}</strong> con el <strong>Dr ${doctorName}</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  `;
+
+  setTimeout(() => {
+    alert.innerHTML = '';
+  }, 3500);
+});
+
 (async () => {
-  const doctorList = await getDoctors();
+  const doctorList = await getDoctors(alert);
 
   const patients = new Stack();
 
@@ -269,6 +288,12 @@ console.log('Creando pacientes');
 
     document.querySelector('#total-agendados').innerHTML =
       patientsQueue.length();
+
+    const customEvent = new CustomEvent('newPatient', {
+      detail: patient,
+    });
+
+    document.dispatchEvent(customEvent);
 
     addPatientModal.hide();
   });
